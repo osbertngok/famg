@@ -43,6 +43,6 @@ fmt:
 # Test the application
 todo-test:
 	@echo "E2E Testing Creating a todo app..."
-	@rm -rf "../todo-app"
-	@$(BIN_DIR)/$(BINARY_NAME) -path="../todo-app" -name="todo" -fullname="Todo App"
+	@rm -rf "../famg-todo-app"
+	@$(BIN_DIR)/$(BINARY_NAME) --parent-path="../" --name="famg-todo-app" --fullname="Famg Todo App"
 	@echo "Test complete"
