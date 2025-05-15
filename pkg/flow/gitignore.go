@@ -10,7 +10,7 @@ import (
 	"github.com/osbertngok/famg/pkg/cmd"
 )
 
-//go:embed gitignore-sample
+//go:embed templates/gitignore.tmpl
 var gitignoreContent string
 
 // PopulateGitignoreResult represents the outcome of populating the .gitignore file

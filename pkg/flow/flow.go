@@ -8,7 +8,7 @@ import (
 	"github.com/osbertngok/famg/pkg/cmd"
 )
 
-// MainFlow orchestrates the folder creation, git repository initialization, and .gitignore population
+// MainFlow orchestrates the folder creation, git repository initialization, .gitignore population, and Makefile creation
 func MainFlow(config cmd.Config) {
 	if createFolderResult := CreateFolder(config); createFolderResult != FolderCreated {
 		fmt.Println(createFolderResult.String())
@@ -22,6 +22,11 @@ func MainFlow(config cmd.Config) {
 
 	if populateGitignoreResult := PopulateGitignore(config); populateGitignoreResult != GitignorePopulated {
 		fmt.Println(populateGitignoreResult.String())
+		return
+	}
+
+	if createMakefileResult := CreateMakefile(config); createMakefileResult != MakefileCreated {
+		fmt.Println(createMakefileResult.String())
 		return
 	}
 }
