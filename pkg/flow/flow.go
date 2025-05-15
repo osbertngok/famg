@@ -100,7 +100,7 @@ func CreateFolder(config cmd.Config) CreateFolderResult {
 // Returns a CreateGitRepoResult indicating the outcome
 func CreateGitRepo(config cmd.Config) CreateGitRepoResult {
 	// Ensure the path is absolute
-	absPath, err := filepath.Abs(config.Path)
+	absPath, err := filepath.Abs(config.ParentPath + "/" + config.Name)
 	if err != nil {
 		return GitInitError
 	}

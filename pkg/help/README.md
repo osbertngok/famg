@@ -23,3 +23,21 @@ It would produce:
 * Setup black, isort, mypy
 * pyproject.toml
 * README.md
+
+## Usage
+
+To use the tool, you can either provide a config file or use the command line arguments.
+
+```bash
+famg --config-file="config.yaml"
+```
+
+```bash
+famg --parent-path="." --name="todo-app" --fullname="Todo App"
+```
+
+To display the help message, you can use the following command:
+
+```bash
+famg --help
+```
