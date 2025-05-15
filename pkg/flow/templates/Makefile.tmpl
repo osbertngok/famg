@@ -1,16 +1,16 @@
-override PROJECT = {{.ProjectName}}
+override PROJECT = {{.Name}}
 override HEAD = $(shell git rev-parse HEAD)
 
-PYTHON_PACKAGES ?= {{.ProjectName}}
-APP_NAME ?= {{.ProjectName}}
+PYTHON_PACKAGES ?= {{.Name}}
+APP_NAME ?= {{.Name}}
 
 # Determine OS. Currently only support Mac.
 UNAME_S := $(shell uname -s) # FIXME: This may fail on Windows
 
 define TEST_LIST_SCRIPT
-from test{{.ProjectName}} import test_{{.ProjectName}}
+from test{{.Name}} import test_{{.Name}}
 import inspect
-for module in [test_{{.ProjectName}}]:
+for module in [test_{{.Name}}]:
     for classname, classobj in inspect.getmembers(module):
         if classname.startswith("Test"):
             for name, obj in inspect.getmembers(classobj):
@@ -24,7 +24,7 @@ override MAKE = $(shell which make)
 override PYTHON3 = $(shell which python3)
 override GOOGLE_API_KEY = $(shell cat .env | grep GOOGLE_API_KEY | cut -d '=' -f2)
 override FLASK_SECRET_KEY = $(shell cat .env | grep FLASK_SECRET_KEY | cut -d '=' -f2)
-override {{.ProjectName | ToUpper}}_SERVER_PORT = $(shell cat .env | grep {{.ProjectName | ToUpper}}_SERVER_PORT | cut -d '=' -f2 | grep . || echo 5003)
+override {{.Name | ToUpper}}_SERVER_PORT = $(shell cat .env | grep {{.Name | ToUpper}}_SERVER_PORT | cut -d '=' -f2 | grep . || echo 5003)
 
 .PHONY: all
 all: usage
@@ -89,9 +89,9 @@ build: build-python-env
 
 .PHONY: run
 run:
-	@echo "Running {{.ProjectName}} server on port $(${{.ProjectName | ToUpper}}_SERVER_PORT)..."
-	@${{.ProjectName | ToUpper}}_SERVER_PORT=${${.ProjectName | ToUpper}_SERVER_PORT} \
-	.ve3/bin/python3 -m python.${.ProjectName}
+	@echo "Running {{.Name}} server on port $(${{.Name | ToUpper}}_SERVER_PORT)..."
+	@${{.Name | ToUpper}}_SERVER_PORT=${${.Name | ToUpper}_SERVER_PORT} \
+	.ve3/bin/python3 -m python.${.Name}
 
 .PHONY: clean
 clean:
@@ -106,13 +106,13 @@ test-list:
 .PHONY: test
 test:
 ifeq (${TESTFILE},)
-	TESTFILE=test_{{.ProjectName}}.py
+	TESTFILE=test_{{.Name}}.py
 endif
 
 ifeq (${TESTNAME},)
-	@.ve3/bin/python3 -m pytest -s python/test{{.ProjectName}}/${TESTFILE}
+	@.ve3/bin/python3 -m pytest -s python/test{{.Name}}/${TESTFILE}
 else
-	@.ve3/bin/python3 -m pytest -s python/test{{.ProjectName}}/${TESTFILE}::${TESTNAME}
+	@.ve3/bin/python3 -m pytest -s python/test{{.Name}}/${TESTFILE}::${TESTNAME}
 endif	
 
 .PHONY: check
@@ -142,24 +142,24 @@ ifeq ("$(wildcard $(PYTHON3_LOCATION))","")
 endif
 
 # Default to project's dynamic data directory
-export {{.ProjectName | ToUpper}}_DATA_PATH ?= $(PWD)/python/{{.ProjectName}}/data
+export {{.Name | ToUpper}}_DATA_PATH ?= $(PWD)/python/{{.Name}}/data
 
 .PHONY: fe-create
 fe-create:
-	@cd typescript/v1/ && npm create vite@latest {{.ProjectName}}-app -- --template react-swc-ts
+	@cd typescript/v1/ && npm create vite@latest {{.Name}}-app -- --template react-swc-ts
 
 .PHONY: fe-install
 fe-install:
-	@cd typescript/v1/{{.ProjectName}}-app && npm install
+	@cd typescript/v1/{{.Name}}-app && npm install
 
 .PHONY: fe-build
 fe-build:
-	@cd typescript/v1/{{.ProjectName}}-app && npm run build
+	@cd typescript/v1/{{.Name}}-app && npm run build
 
 .PHONY: fe-dev
 fe-dev:
-	@cd typescript/v1/{{.ProjectName}}-app && npm run dev
+	@cd typescript/v1/{{.Name}}-app && npm run dev
 
 .PHONY: fe-scss
 fe-scss:
-	@cd typescript/v1/{{.ProjectName}}-app && npm run watch-scss
+	@cd typescript/v1/{{.Name}}-app && npm run watch-scss

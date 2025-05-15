@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/osbertngok/famg/pkg/cmd"
@@ -58,12 +59,24 @@ func CreateMakefile(config cmd.Config) CreateMakefileResult {
 	}
 
 	// Parse the template
-	tmpl, err := template.ParseFiles("pkg/flow/templates/Makefile.tmpl")
+	funcMap := template.FuncMap{
+		"ToUpper": strings.ToUpper,
+	}
+	tmpl, err := template.New("Makefile").Funcs(funcMap).ParseFiles("pkg/flow/templates/Makefile.tmpl")
 	if err != nil {
 		logger.Error("Failed to parse Makefile template",
 			zap.Error(err))
 		return MakefileError
 	}
+
+	// Log the config values
+	logger.Info("Creating Makefile with config",
+		zap.String("Name", config.Name),
+		zap.String("Path", config.Path))
+
+	// Log the template name
+	logger.Info("Template name",
+		zap.String("name", tmpl.Name()))
 
 	// Create the Makefile
 	file, err := os.Create(makefilePath)
@@ -76,7 +89,7 @@ func CreateMakefile(config cmd.Config) CreateMakefileResult {
 	defer file.Close()
 
 	// Execute the template
-	if err := tmpl.Execute(file, config); err != nil {
+	if err := tmpl.ExecuteTemplate(file, "Makefile.tmpl", config); err != nil {
 		logger.Error("Failed to execute template",
 			zap.Error(err))
 		os.Remove(makefilePath) // Clean up on error
