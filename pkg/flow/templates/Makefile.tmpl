@@ -63,13 +63,9 @@ usage: check-os
 	@echo "\033[0m"
 
 .ve3/bin/python3:
-	@if [ ! -x "/usr/local/bin/python3" ]; then \
-		echo "Error: python3 not found in PATH"; \
-		exit 1; \
-	fi
-	@echo "Found python3 at /usr/local/bin/python3"
+	@echo "Found python3 at $(PYTHON3)"
 	@mkdir -p .ve3/bin
-	@ln -s /usr/local/bin/python3 .ve3/bin/python3
+	@ln -s $(PYTHON3) .ve3/bin/python3
 
 .ve3/bin/pip: .ve3/bin/python3
 	@echo "Downloading pip..."
@@ -89,9 +85,9 @@ build: build-python-env
 
 .PHONY: run
 run:
-	@echo "Running {{.Name}} server on port $(${{.Name | ToUpper}}_SERVER_PORT)..."
-	@${{.Name | ToUpper}}_SERVER_PORT=${${.Name | ToUpper}_SERVER_PORT} \
-	.ve3/bin/python3 -m python.${.Name}
+	@echo "Running {{.Name}} server on port ${ {{.Name | ToUpper}}_SERVER_PORT}..."
+	@{{.Name | ToUpper}}_SERVER_PORT=${ {{.Name | ToUpper}}_SERVER_PORT} \
+	.ve3/bin/python3 -m python.{{.Name}}
 
 .PHONY: clean
 clean:
@@ -136,9 +132,8 @@ check-os:
 ifeq ($(UNAME_S),Darwin)
 	$(error Cannot support non-MacOS. Current OS is $(UNAME_S))
 endif
-PYTHON3_LOCATION := /usr/local/bin/python3.12
-ifeq ("$(wildcard $(PYTHON3_LOCATION))","")
-    $(error Cannot find file $(PYTHON3_LOCATION))
+ifeq ("$(wildcard $(PYTHON3))","")
+    $(error Cannot find Python3 executable at $(PYTHON3))
 endif
 
 # Default to project's dynamic data directory
