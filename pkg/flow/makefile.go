@@ -1,12 +1,24 @@
 package flow
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"text/template"
 
 	"github.com/osbertngok/famg/pkg/cmd"
+	"go.uber.org/zap"
 )
+
+var logger *zap.Logger
+
+func init() {
+	var err error
+	logger, err = zap.NewProduction()
+	if err != nil {
+		panic(fmt.Sprintf("failed to initialize logger: %v", err))
+	}
+}
 
 // CreateMakefileResult represents the outcome of makefile creation
 type CreateMakefileResult int
@@ -40,27 +52,38 @@ func CreateMakefile(config cmd.Config) CreateMakefileResult {
 
 	// Check if Makefile already exists
 	if _, err := os.Stat(makefilePath); err == nil {
+		logger.Info("Makefile already exists",
+			zap.String("path", makefilePath))
 		return MakefileExists
 	}
 
 	// Parse the template
 	tmpl, err := template.ParseFiles("pkg/flow/templates/Makefile.tmpl")
 	if err != nil {
+		logger.Error("Failed to parse Makefile template",
+			zap.Error(err))
 		return MakefileError
 	}
 
 	// Create the Makefile
 	file, err := os.Create(makefilePath)
 	if err != nil {
+		logger.Error("Failed to create Makefile",
+			zap.String("path", makefilePath),
+			zap.Error(err))
 		return MakefileError
 	}
 	defer file.Close()
 
 	// Execute the template
 	if err := tmpl.Execute(file, config); err != nil {
+		logger.Error("Failed to execute template",
+			zap.Error(err))
 		os.Remove(makefilePath) // Clean up on error
 		return MakefileError
 	}
 
+	logger.Info("Makefile created successfully",
+		zap.String("path", makefilePath))
 	return MakefileCreated
 }
