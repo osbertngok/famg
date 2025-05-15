@@ -3,6 +3,7 @@ package flow
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -93,6 +94,22 @@ func CreateMakefile(config cmd.Config) CreateMakefileResult {
 		logger.Error("Failed to execute template",
 			zap.Error(err))
 		os.Remove(makefilePath) // Clean up on error
+		return MakefileError
+	}
+
+	// Force add and commit the Makefile
+	cmd := exec.Command("git", "add", "-f", "Makefile")
+	cmd.Dir = config.Path
+	if err := cmd.Run(); err != nil {
+		logger.Error("Failed to add Makefile",
+			zap.Error(err))
+		return MakefileError
+	}
+	cmd = exec.Command("git", "commit", "-m", "feat(init): add Makefile")
+	cmd.Dir = config.Path
+	if err := cmd.Run(); err != nil {
+		logger.Error("Failed to commit Makefile",
+			zap.Error(err))
 		return MakefileError
 	}
 

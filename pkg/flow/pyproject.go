@@ -2,6 +2,7 @@ package flow
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"text/template"
 
@@ -51,6 +52,19 @@ func CreatePyproject(config cmd.Config) CreatePyprojectResult {
 	if err := tmpl.ExecuteTemplate(file, "pyproject.toml.tmpl", config); err != nil {
 		logger.Error("Failed to execute pyproject.toml template", zap.Error(err))
 		os.Remove(pyprojectPath)
+		return PyprojectError
+	}
+	// Force add and commit the pyproject.toml file
+	cmd := exec.Command("git", "add", "-f", "pyproject.toml")
+	cmd.Dir = config.Path
+	if err := cmd.Run(); err != nil {
+		logger.Error("Failed to add pyproject.toml", zap.Error(err))
+		return PyprojectError
+	}
+	cmd = exec.Command("git", "commit", "-m", "feat(init): add pyproject.toml")
+	cmd.Dir = config.Path
+	if err := cmd.Run(); err != nil {
+		logger.Error("Failed to commit pyproject.toml", zap.Error(err))
 		return PyprojectError
 	}
 	logger.Info("pyproject.toml created successfully", zap.String("path", pyprojectPath))

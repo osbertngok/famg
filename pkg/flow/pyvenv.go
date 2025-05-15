@@ -2,6 +2,7 @@ package flow
 
 import (
 	"os"
+	"os/exec"
 	"path/filepath"
 	"text/template"
 
@@ -56,6 +57,19 @@ func CreatePyvenv(config cmd.Config) CreatePyvenvResult {
 	if err := tmpl.ExecuteTemplate(file, "pyvenv.cfg.tmpl", config); err != nil {
 		logger.Error("Failed to execute pyvenv.cfg template", zap.Error(err))
 		os.Remove(pyvenvPath)
+		return PyvenvError
+	}
+	// Force add and commit the pyvenv.cfg file
+	cmd := exec.Command("git", "add", "-f", ".ve3/pyvenv.cfg")
+	cmd.Dir = config.Path
+	if err := cmd.Run(); err != nil {
+		logger.Error("Failed to add pyvenv.cfg", zap.Error(err))
+		return PyvenvError
+	}
+	cmd = exec.Command("git", "commit", "-m", "feat(init): add pyvenv.cfg")
+	cmd.Dir = config.Path
+	if err := cmd.Run(); err != nil {
+		logger.Error("Failed to commit pyvenv.cfg", zap.Error(err))
 		return PyvenvError
 	}
 	logger.Info("pyvenv.cfg created successfully", zap.String("path", pyvenvPath))
