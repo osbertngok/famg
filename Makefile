@@ -1,4 +1,4 @@
-.PHONY: build run clean help
+.PHONY: build run clean help fmt
 
 # Binary name and directory
 BINARY_NAME=famg
@@ -13,6 +13,7 @@ help:
 	@echo "  make build    - Build the famg binary in $(BIN_DIR)/"
 	@echo "  make run      - Build and run the famg binary"
 	@echo "  make clean    - Remove the built binary"
+	@echo "  make fmt      - Format Go code"
 	@echo "  make help     - Show this help message"
 
 # Build the application
@@ -32,3 +33,9 @@ clean:
 	@echo "Cleaning..."
 	@rm -rf $(BIN_DIR)
 	@echo "Clean complete"
+
+# Format Go code
+fmt:
+	@echo "Formatting Go code..."
+	@go fmt ./...
+	@echo "Format complete"
