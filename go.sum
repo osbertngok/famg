@@ -1,0 +1,4 @@
+github.com/kevinburke/go-bindata v1.1.0 h1:JZ8XIdxtkAszuYkgf17qwQzcU/RgsGSVLSULJdN+5bU=
+github.com/kevinburke/go-bindata v1.1.0/go.mod h1:UJ72WTOoRKzbz+vwtKgARJwsy+1ZGUukVBUCc197TJo=
+github.com/osbertngok/famg v0.0.0-20250515031856-01d737ed1590 h1:YLjkkDzpUjDJygJeweZms4gtkaIw6Dq5wu1M1d3MuBM=
+github.com/osbertngok/famg v0.0.0-20250515031856-01d737ed1590/go.mod h1:R1yXtCqTBiCCzwOTf+ayTRRPzvD8NEZW//1FkKgVKj0=

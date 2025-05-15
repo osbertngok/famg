@@ -1,10 +1,12 @@
-package famg
+package flow
 
 import (
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/osbertngok/famg/pkg/cmd"
 )
 
 // CreateFolderResult represents the outcome of folder creation
@@ -69,7 +71,7 @@ func (r CreateFolderResult) String() string {
 
 // CreateFolder creates a folder according to the path specified in Config
 // Returns a CreateFolderResult indicating the outcome
-func CreateFolder(config Config) CreateFolderResult {
+func CreateFolder(config cmd.Config) CreateFolderResult {
 	// Ensure the path is absolute
 	absPath, err := filepath.Abs(config.Path)
 	if err != nil {
@@ -96,7 +98,7 @@ func CreateFolder(config Config) CreateFolderResult {
 
 // CreateGitRepo initializes a git repository in the specified folder
 // Returns a CreateGitRepoResult indicating the outcome
-func CreateGitRepo(config Config) CreateGitRepoResult {
+func CreateGitRepo(config cmd.Config) CreateGitRepoResult {
 	// Ensure the path is absolute
 	absPath, err := filepath.Abs(config.Path)
 	if err != nil {
@@ -123,7 +125,7 @@ func CreateGitRepo(config Config) CreateGitRepoResult {
 	return GitRepoCreated
 }
 
-func MainFlow(config Config) {
+func MainFlow(config cmd.Config) {
 	if createFolderResult := CreateFolder(config); createFolderResult != FolderCreated {
 		fmt.Println(createFolderResult.String())
 		return

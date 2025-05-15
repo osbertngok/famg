@@ -20,7 +20,7 @@ help:
 build:
 	@echo "Building $(BINARY_NAME)..."
 	@mkdir -p $(BIN_DIR)
-	@go build -o $(BIN_DIR)/$(BINARY_NAME) cmd/famg/main.go
+	@GO111MODULE=on go build -o $(BIN_DIR)/$(BINARY_NAME) ./cmd/famg
 	@echo "Build complete. Binary: $(BIN_DIR)/$(BINARY_NAME)"
 
 # Run the application
